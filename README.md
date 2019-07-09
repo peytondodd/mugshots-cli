@@ -1,5 +1,14 @@
 # Mugshots CLI
+
 > Python 3 CLI for fetching latest mugshots from mugshots.starnewsonline.com
+
+### Uses **BeautifulSoup4** and **Requests** libraries under the hood.
+
+## Important Information
+**This site records those taken into custody by local law enforcement. Booking information has been collected from the Bladen, Brunswick, New Hanover and Pender County jail systems.**
+
+
+**This program makes no assumptions or representations about guilt or innocence. People charged with crimes are presumed innocent unless proven guilty. Information on the StarNewsOnline site and this program should not be used to determine any person’s actual criminal record.**
 
 ## Features
 * Will automatically add demographics to the local `records.csv` file.
