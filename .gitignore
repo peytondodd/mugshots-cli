@@ -1,0 +1,6 @@
+lib/
+.env
+*.swp
+.DS_Store
+mugs/*
+

@@ -1,0 +1,94 @@
+from bs4 import BeautifulSoup
+import requests
+import random
+import csv
+from re import sub
+from decimal import Decimal
+
+# get last ID number as a start
+index_page = requests.get("http://mugshots.starnewsonline.com")
+raw_html = BeautifulSoup(index_page.text,'html.parser')
+latest_mugs = raw_html.find_all(id='mugs')
+picture_links = latest_mugs[0].find_all('a');
+latest_id = int(picture_links[0].get('href').split('=')[1])
+amount = -1
+
+while(amount < 0):
+    amount = int(input('Enter the amount of latest records you want fetch:  '))
+    print("")
+
+# column names for csv records file
+column_names = ['id','name','charges','bond','county','date','gender','race']
+
+# not sure what this does, but it's required in post request
+fields= {"_EVENTTARGET": "ctl00$ContentPlaceHolder1$lbtnNext"}
+
+# loop through the ids in specified amount
+hr = "------------------------------------------------------"
+print("")
+print(hr)
+with open('records.csv','a', newline='') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=column_names)
+    for i in range(int(latest_id - amount),latest_id):
+        record = {}
+
+        # get the page html
+        get_page = requests.post("http://mugshots.starnewsonline.com/Details.aspx?BookingID="+str(i), fields)
+        
+        # parse html into soup
+        soup = BeautifulSoup(get_page.text, 'html.parser')
+
+        # get the details section
+        details = soup.find_all("div","mugshotsNameDetail")
+        if len(details) == 0:
+            continue
+        details = details[0]
+        name = details.find_all("h2")[0].text
+        if name:
+            print(str(i) + " - " + name)
+            record['id'] = i
+            record['name'] = name
+
+        if len(name) == 0:
+            continue
+
+        other = details.find_all("b");
+        for info in other:
+            if info.text == "Booking on:":
+                record["date"] = info.next_sibling.string.rstrip()
+            elif info.text == "County:":
+                record["county"] = info.next_sibling.string.rstrip()
+            elif info.text == "Gender:":
+                record["gender"] = info.next_sibling.string.rstrip()
+            elif info.text == "Race:":
+                record["race"] = info.next_sibling.string.rstrip()
+
+        image = requests.get("http://mugshots.starnewsonline.com/Content/Images/WM/"+ str(i) + ".jpg", stream=True)
+        if image.status_code == 200:
+            file = open("mugs/" + str(i) + ".jpg", "wb")
+            for chunk in image:
+                file.write(chunk)
+            file.close()
+
+
+        print("")
+        details = soup.find_all("div","mugshotsArrestInfoDetail")
+        if len(details) > 0:
+            charges = []
+            bond = 0
+            for charge in details[0].find_all("ul")[0].find_all("li"):
+                violations = charge.find_all("b")
+                if len(violations) > 0:
+                    print(violations[0].next_sibling.string)
+                    charges.append(violations[0].next_sibling.string)
+                    if len(violations) > 1:
+                        bond_string = violations[1].next_sibling.string
+                        bond += Decimal(sub(r'[^\d.]', '', bond_string))
+            print("")
+            print("BOND: $" + str(bond))
+            record['bond'] = bond
+            record['charges'] = charges
+        print("")
+        print(hr)
+        writer.writerow(record)
+        #print(record)
