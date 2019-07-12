@@ -19,6 +19,10 @@
 
 ## Installation
 ```bash
+$ git clone git@github.com:zacharytyhacz/mugshots-cli.git
+
+$ cd mugshots-cli
+
 $ pip install
 
 $ python3 main.py
