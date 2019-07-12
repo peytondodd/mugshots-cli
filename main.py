@@ -13,7 +13,7 @@ picture_links = latest_mugs[0].find_all('a');
 latest_id = int(picture_links[0].get('href').split('=')[1])
 amount = -1
 
-while(amount < 0):
+while(amount < 1):
     amount = int(input('Enter the amount of latest records you want fetch:  '))
     print("")
 
