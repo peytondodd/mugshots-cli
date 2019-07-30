@@ -1,0 +1,15 @@
+get route goes to records.csv and retrieves last <amount> of info
+if last inserted routes date is ~3 days ago
+	> grab new ids up to our last id
+		> get latest the id. 
+			> loop through until id is equal or greater than our last id
+
+
+
+guessing:
+get picture image and a charge
+> get 2 other random charges amonst other saved infos
+> check if charge is not in this mug's charges
+	> check length
+	> reg expression if more than 4 letters different
+> randomize position
