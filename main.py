@@ -10,8 +10,15 @@ index_page = requests.get("http://mugshots.starnewsonline.com")
 raw_html = BeautifulSoup(index_page.text,'html.parser')
 latest_mugs = raw_html.find_all(id='mugs')
 picture_links = latest_mugs[0].find_all('a');
-latest_id = int(picture_links[0].get('href').split('=')[1])
+latest_index = 0
+def get_next_latest():
+    global latest_index, picture_links
+    latest_index += 1
+    return int(picture_links[latest_index].get('href').split('=')[1])
+latest_index = get_next_latest()
 amount = -1
+
+
 
 while(amount < 1):
     amount = int(input('Enter the amount of latest records you want fetch:  '))
@@ -29,7 +36,17 @@ print("")
 print(hr)
 with open('records.csv','a', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=column_names)
-    for i in range(int(latest_id - amount),latest_id):
+    records_received = 0
+    i = latest_index + 1
+    while records_received < amount:
+        if i > 10:
+            i -= 2 
+        elif i > 30:
+            i = get_next_latest()
+            continue
+        else:
+            i -= 1
+
         record = {}
 
         # get the page html
@@ -90,5 +107,7 @@ with open('records.csv','a', newline='') as csvfile:
             record['charges'] = charges
         print("")
         print(hr)
+        print("")
         writer.writerow(record)
+        records_received += 1
         #print(record)
