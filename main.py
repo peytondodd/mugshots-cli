@@ -145,8 +145,8 @@ def update_records(last_id=False):
         records_received = 0
         i = int(get_next_latest())
 
-        # get last 32 records
-        last_id = i - 32
+        # get last 64 records
+        last_id = i - 64
 
         while i > last_id:
             record = get_record(i)
