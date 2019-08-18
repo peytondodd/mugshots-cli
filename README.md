@@ -25,6 +25,8 @@ $ cd mugshots-cli
 
 $ pip install requirements.txt
 
+$ mv .env_example .env
+
 $ python3 main.py
 ```
 <img src="https://i.ibb.co/RHkzRBJ/shot1.png" alt="shot1" border="0">
