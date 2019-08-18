@@ -15,6 +15,8 @@ column_names = ['id','date','bond','charges','county','gender','race']
 def check_for_updates(latest_record):
     last_date = latest_record.split(',')[1]
     last_id = latest_record.split(',')[0]
+    print("latest record:")
+    print(str(latest_record))
     mdy = last_date.split('/')
 
     then = datetime(int(mdy[2]), int(mdy[0]), int(mdy[1]))
@@ -22,7 +24,9 @@ def check_for_updates(latest_record):
 
     print(str(now-then))
     if (now - then).days > 2:
+        print(" needs updates")
         return True
+    print(" does not need updates")
     return False
     
 latest_index = 0
@@ -48,7 +52,7 @@ def get_mugshots(amount):
         if updated == False:
             records_file = open("records.csv","r")
             records = records_file.readlines()
-            records = list(reversed(records))
+            records = list(records)
             records_file.close()
             if len(records) == 0:
                 update_records()
@@ -58,7 +62,7 @@ def get_mugshots(amount):
                     update_records(last.split(',')[0])
             records_file = open("records.csv","r")
             records = records_file.readlines()
-            records = list(reversed(records))
+            records = list(records)
             records_file.close()
             if len(records) < amount:
                 amount = len(records)
@@ -134,34 +138,26 @@ def increment_total():
 
 def update_records(last_id=False):
     global column_names, latest_index
+    print("here with last id of " + str(last_id))
     fields= {"_EVENTTARGET": "ctl00$ContentPlaceHolder1$lbtnNext"}
     with open('records.csv','a', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=column_names)
         records_received = 0
-        if last_id == False:
-            last_id = get_next_latest() 
-            i = last_id
-            while i > last_id - 32:
-                record = get_record(i)
-                if record == False:
-                    i -= 1
-                    continue
-                else:
-                    records_received += 1
+        i = int(get_next_latest())
+
+        # get last 32 records
+        last_id = i - 32
+
+        while i > last_id:
+            record = get_record(i)
+            print("getting record #" + str(i))
+            if record == False:
+                print("failed to get record.")
                 i -= 1
-                print(str(i) + " - ADDING")
-                increment_total()
-                writer.writerow(record)
-        else:
-            i = int(last_id) + 1
-            while i < int(last_id):
-                record = get_record(i)
-                if record == False:
-                    i += 1
-                    continue
-                else:
-                    records_received += 1
-                print(str(i) + " - ADDING")
-                increment_total()
-                writer.writerow(record)
-            i += 1
+                continue
+            else:
+                records_received += 1
+            i = i - 1
+            print(str(i) + " - ADDING")
+            increment_total()
+            writer.writerow(record)
