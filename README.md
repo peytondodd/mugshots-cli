@@ -23,7 +23,7 @@ $ git clone git@github.com:zacharytyhacz/mugshots-cli.git
 
 $ cd mugshots-cli
 
-$ pip install
+$ pip install requirements.txt
 
 $ python3 main.py
 ```
