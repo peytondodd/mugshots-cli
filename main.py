@@ -48,6 +48,7 @@ def get_mugshots(amount):
         if updated == False:
             records_file = open("records.csv","r")
             records = records_file.readlines()
+            records = list(reversed(records))
             records_file.close()
             if len(records) == 0:
                 update_records()
@@ -57,6 +58,7 @@ def get_mugshots(amount):
                     update_records(last.split(',')[0])
             records_file = open("records.csv","r")
             records = records_file.readlines()
+            records = list(reversed(records))
             records_file.close()
             if len(records) < amount:
                 amount = len(records)
