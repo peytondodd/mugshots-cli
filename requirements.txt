@@ -34,5 +34,4 @@ soupsieve==1.9.2
 stem==1.7.1
 torrequest==0.1.0
 virtualenv==16.3.0
-Werkzeug==0.14.1
 wrapt==1.11.1
